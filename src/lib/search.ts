@@ -62,6 +62,7 @@ export function search(query: string, category?: CategoryId): SearchResult[] {
     return pool.map((i) => ({ entry: i.entry, score: 0 }));
   }
 
+  const phrase = normalize(query);
   const results: (SearchResult & { matched: number })[] = [];
   for (const item of pool) {
     let score = 0;
@@ -76,6 +77,8 @@ export function search(query: string, category?: CategoryId): SearchResult[] {
       if (s > 0) matched++;
       score += s;
     }
+    // Exact phrase in the title outranks scattered word matches.
+    if (phrase.length > 2 && item.title.includes(phrase)) score += 10;
     if (matched > 0) results.push({ entry: item.entry, score, matched });
   }
 
