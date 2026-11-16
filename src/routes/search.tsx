@@ -9,12 +9,12 @@ import { SearchBox } from "@/components/search/SearchBox";
 import { ResultCard } from "@/components/search/ResultCard";
 import { cn } from "@/lib/utils";
 
-type SearchParams = { q?: string; cat?: CategoryId };
+type SearchParams = { q?: string | undefined; cat?: CategoryId | undefined };
 
 export const Route = createFileRoute("/search")({
   validateSearch: (s: Record<string, unknown>): SearchParams => ({
-    q: typeof s.q === "string" && s.q.trim() ? s.q : undefined,
-    cat: isCategoryId(s.cat) ? s.cat : undefined,
+    q: typeof s["q"] === "string" && s["q"].trim() ? s["q"] : undefined,
+    cat: isCategoryId(s["cat"]) ? s["cat"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -103,7 +103,7 @@ function CategoryTab({
   label,
 }: {
   q: string;
-  cat?: CategoryId;
+  cat?: CategoryId | undefined;
   active: boolean;
   label: string;
 }) {

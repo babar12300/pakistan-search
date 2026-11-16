@@ -12,7 +12,7 @@ export function SearchBox({
   autoFocus,
 }: {
   defaultValue?: string;
-  category?: CategoryId;
+  category?: CategoryId | undefined;
   size?: "lg" | "sm";
   autoFocus?: boolean;
 }) {

@@ -27,7 +27,7 @@ export function tokenize(query: string): string[] {
 }
 
 function domainOf(url: string): string {
-  return url.replace(/^https?:\/\//, "").replace(/^www\./, "").split("/")[0];
+  return url.replace(/^https?:\/\//, "").replace(/^www\./, "").split("/")[0] ?? "";
 }
 
 type Indexed = {

@@ -3,11 +3,11 @@ import { search } from "@/lib/search";
 
 describe("Pakistan.com search", () => {
   it("finds NADRA first for an English query", () => {
-    expect(search("nadra")[0].entry.id).toBe("nadra");
+    expect(search("nadra")[0]?.entry.id).toBe("nadra");
   });
 
   it("finds the same site for an Urdu query", () => {
-    expect(search("نادرا")[0].entry.id).toBe("nadra");
+    expect(search("نادرا")[0]?.entry.id).toBe("nadra");
   });
 
   it("matches Lahore places when searching in Urdu", () => {
@@ -22,6 +22,6 @@ describe("Pakistan.com search", () => {
   });
 
   it("puts the Cricket Board first for 'pakistan cricket'", () => {
-    expect(search("pakistan cricket")[0].entry.id).toBe("pcb");
+    expect(search("pakistan cricket")[0]?.entry.id).toBe("pcb");
   });
 });
