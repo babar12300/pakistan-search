@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Directory entries live as static bilingual data in `src/data/directory.ts`; search is a pure client-side function in `src/lib/search.ts` (no backend needed for a curated list, and it stays unit-testable).
+- UI language (en/ur) comes from `LangProvider` in `src/lib/i18n.tsx`, which sets `<html dir>`; use logical spacing (ps/pe/ms/me/start/end) so layouts flip for Urdu.
