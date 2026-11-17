@@ -14,13 +14,159 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      crawl_frontier: {
+        Row: {
+          attempts: number
+          created_at: string
+          found_via: string | null
+          host: string
+          links_crawled_at: string | null
+          processed_at: string | null
+          reason: string | null
+          snippet_description: string | null
+          snippet_title: string | null
+          source: string
+          status: string
+          url: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          found_via?: string | null
+          host: string
+          links_crawled_at?: string | null
+          processed_at?: string | null
+          reason?: string | null
+          snippet_description?: string | null
+          snippet_title?: string | null
+          source: string
+          status?: string
+          url: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          found_via?: string | null
+          host?: string
+          links_crawled_at?: string | null
+          processed_at?: string | null
+          reason?: string | null
+          snippet_description?: string | null
+          snippet_title?: string | null
+          source?: string
+          status?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      crawl_state: {
+        Row: {
+          id: number
+          last_run_at: string | null
+          last_summary: Json | null
+          locked_until: string | null
+          paused_reason: string | null
+          search_cursor: number
+        }
+        Insert: {
+          id?: number
+          last_run_at?: string | null
+          last_summary?: Json | null
+          locked_until?: string | null
+          paused_reason?: string | null
+          search_cursor?: number
+        }
+        Update: {
+          id?: number
+          last_run_at?: string | null
+          last_summary?: Json | null
+          locked_until?: string | null
+          paused_reason?: string | null
+          search_cursor?: number
+        }
+        Relationships: []
+      }
+      discovered_sites: {
+        Row: {
+          category_id: string
+          city_en: string
+          city_ur: string
+          created_at: string
+          description_en: string
+          description_ur: string
+          found_via: string | null
+          host: string
+          id: string
+          source: string
+          tags: string[]
+          title_en: string
+          title_ur: string
+          url: string
+        }
+        Insert: {
+          category_id: string
+          city_en?: string
+          city_ur?: string
+          created_at?: string
+          description_en: string
+          description_ur: string
+          found_via?: string | null
+          host: string
+          id?: string
+          source: string
+          tags?: string[]
+          title_en: string
+          title_ur: string
+          url: string
+        }
+        Update: {
+          category_id?: string
+          city_en?: string
+          city_ur?: string
+          created_at?: string
+          description_en?: string
+          description_ur?: string
+          found_via?: string | null
+          host?: string
+          id?: string
+          source?: string
+          tags?: string[]
+          title_en?: string
+          title_ur?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      site_categories: {
+        Row: {
+          created_at: string
+          icon: string
+          id: string
+          label_en: string
+          label_ur: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string
+          id: string
+          label_en: string
+          label_ur: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string
+          id?: string
+          label_en?: string
+          label_ur?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      acquire_crawl_lock: { Args: { lease_seconds: number }; Returns: string }
     }
     Enums: {
       [_ in never]: never
