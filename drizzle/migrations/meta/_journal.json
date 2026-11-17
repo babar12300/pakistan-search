@@ -8,6 +8,13 @@
       "when": 1794893167765,
       "tag": "0000_site_discovery",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794893284708,
+      "tag": "0001_crawl_lock_probe",
+      "breakpoints": true
     }
   ]
 }
