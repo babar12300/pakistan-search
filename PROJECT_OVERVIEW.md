@@ -10,66 +10,82 @@ Pakistan Search
 - Description: `a search engine of Pakistan developed by @ast`
 
 ## Purpose
-Pakistan Search is a web-based search engine and directory-style project focused on Pakistan. The goal of the project is to provide a searchable, user-friendly interface for locating Pakistan-related information and listings through a modern front-end experience.
+Pakistan Search is a search-and-directory web application focused on finding Pakistani websites, services, news, institutions, and places. It provides a curated catalog of Pakistan-related entries rather than indexing the entire web like a general-purpose search engine.
+
+The project is designed to help users browse Pakistani resources in a structured way. Each directory entry can include a title, URL, category, city, English and Urdu metadata, and tags. The app organizes content into categories such as news, government, education, travel, shopping, finance, telecom, sports, health, and culture.
+
+This makes the platform useful for users looking for Pakistani websites, institutions, services, or places in a clean, searchable interface.
 
 ## Main Objective
-The app is designed to help users browse and search Pakistan-related content in a fast, structured, and easy-to-navigate way. It combines a searchable interface with modern UI patterns and a strong TypeScript-based frontend architecture.
+The main objective of the project is to make Pakistan-related online resources easier to discover and search. It combines a searchable directory, category browsing, modern UI design, and bilingual support to serve users in both English and Urdu.
 
 ## Key Features
-- Search-focused user experience
-- Pakistan-themed content discovery
-- Responsive modern UI
-- Client-side search capabilities
-- Bilingual-ready layout patterns and localization support
-- React-based application architecture
-- Integration with external data and APIs via Supabase and modern app tooling
+- Search-focused user experience for Pakistan-related websites and services
+- Curated directory of Pakistani resources with category and city metadata
+- Home page with popular search suggestions and category browsing
+- English and Urdu interface support
+- Right-to-left (RTL) layout support for Urdu
+- Relevance-based scoring in search results
+- Client-side search normalization for Urdu and Arabic variants
+- Support for discovered catalog entries merged with the built-in directory
+- Shareable search URLs using query parameters
+- Responsive and modern user interface
 
 ## Technology Stack
-This project is built with a modern frontend stack, including:
+This project uses a modern frontend stack, including:
 
-- TypeScript — primary development language
+- TypeScript — primary application language
 - React 19 — UI framework
-- Vite — build and dev tooling
-- TanStack Start / TanStack Router — routing and app structure
+- Vite — development and build tooling
+- TanStack Start and TanStack Router — app framework and routing
+- TanStack Query — data loading and caching
 - Tailwind CSS — styling system
-- Radix UI — accessible UI components
-- Supabase — backend/data integration support
-- Drizzle — ORM / database tooling
-- Vitest — testing framework
-- ESLint + Prettier — code quality and formatting
+- Radix UI and UI component libraries — accessible interface primitives
+- Supabase and Drizzle tooling — data integration and database-related setup
+- Vitest and Testing Library — testing framework
+- ESLint and Prettier — code quality and formatting
 
 ## Language Composition
-The repository is primarily TypeScript-based:
+The repository is primarily built with TypeScript.
+
+GitHub language composition:
 
 - TypeScript: 96.9%
 - CSS: 2.6%
 - JavaScript: 0.5%
 
-This means the project is mainly developed in TypeScript, with CSS used for styling and JavaScript used only in smaller supporting roles.
-
-## Project Structure
-A typical project layout includes:
-
-- `src/` — application source code
-- `public/` — static assets
-- `supabase/` — Supabase-related configuration and resources
-- `drizzle/` — schema and migration tooling
-- `README.md` — setup and project documentation
-- `package.json` — scripts and dependency configuration
-- `vite.config.ts` — Vite configuration
-- `tsconfig.json` — TypeScript configuration
+This means TypeScript is the main programming language used in the codebase. CSS is used for styling, and JavaScript is present in a minor supporting role.
 
 ## Architecture Overview
-The project follows a modern frontend architecture:
+The project follows a modern frontend architecture based on route-driven pages and a reusable catalog/search model:
 
-- Component-based UI built with React
-- Route-based organization using TanStack routing
-- Search logic separated into reusable app modules
-- Styling through Tailwind and shared UI utilities
-- Localized or bilingual UI patterns supported by helper libraries and layout conventions
+1. Route files in `src/routes` define the main pages.
+2. The home page (`/`) loads catalog data and displays a search box and category cards.
+3. The search page (`/search`) reads query parameters such as `q` and `cat`.
+4. The catalog query loads the catalog and merges built-in entries with discovered ones.
+5. The search logic normalizes text, tokenizes search terms, and scores matches across multiple fields.
+6. The language provider manages English and Urdu output and updates the document direction.
+7. UI components render results, categories, and language toggles for the user.
 
-## Development Workflow
-The project is configured for a standard Node.js-based development flow:
+This separation keeps the app maintainable: page routes, reusable catalog logic, data, and UI rendering are handled independently.
+
+## Project Structure
+The repository includes these major areas:
+
+- `src/` — application source code
+- `src/routes/` — page routes and app shell
+- `src/lib/` — shared logic such as search, catalog, and localization
+- `src/data/` — structured directory data
+- `src/components/` — reusable UI components
+- `public/` — static assets
+- `supabase/` — Supabase integration-related files
+- `drizzle/` — schema and database tooling
+- `README.md` — setup and basic project instructions
+- `package.json` — scripts and dependencies
+- `roadmap.md` — project roadmap and future goals
+
+## Development Workflow and Setup Notes
+The project uses a standard Node.js + npm workflow.
 
 ```bash
 git clone https://github.com/babar12300/pakistan-search.git
@@ -87,8 +103,7 @@ npm run lint
 npm test
 ```
 
-## Project Summary
-Pakistan Search is a TypeScript-first web application focused on helping users explore Pakistan-related content through a modern search-driven interface. It combines React, Vite, Tailwind, and modern routing tools to create a clean and scalable frontend experience.
+The repository also includes a `bun.lock` file, but the project README specifically documents npm-based development. The project’s `AGENTS.md` also warns against editing Lovable-managed database files and automatically generated files, which helps preserve generated and managed system state.
 
-## Final Note
-The main programming language used in this project is TypeScript, while CSS and JavaScript also appear in small amounts as complementary technologies.
+## Summary
+Pakistan Search is a TypeScript-first web application aimed at making Pakistan-related web resources easier to discover and search. It combines a curated Pakistani directory, bilingual support, modern React architecture, and search ranking logic into a clean, user-friendly experience. The codebase is primarily TypeScript-based, with CSS used for styling and JavaScript appearing only in small supporting amounts.
