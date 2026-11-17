@@ -1,4 +1,4 @@
-import { CATEGORIES, CITIES, DIRECTORY, type CategoryId, type Entry } from "@/data/directory";
+import { STATIC_CATEGORIES, STATIC_SITES, hostOf, type Category, type Site } from "@/lib/catalog";
 
 const STOPWORDS = new Set([
   "the", "of", "in", "and", "a", "an", "for", "to", "on", "at", "pakistan", "pakistani", "pk",
@@ -26,12 +26,8 @@ export function tokenize(query: string): string[] {
   return meaningful.length ? meaningful : all;
 }
 
-function domainOf(url: string): string {
-  return url.replace(/^https?:\/\//, "").replace(/^www\./, "").split("/")[0] ?? "";
-}
-
 type Indexed = {
-  entry: Entry;
+  entry: Site;
   title: string;
   domain: string;
   tags: string;
@@ -39,23 +35,44 @@ type Indexed = {
   description: string;
 };
 
-const INDEX: Indexed[] = DIRECTORY.map((entry) => {
-  const category = CATEGORIES.find((c) => c.id === entry.category)!;
-  const city = CITIES[entry.city];
-  return {
-    entry,
-    title: normalize(`${entry.title.en} ${entry.title.ur}`),
-    domain: normalize(domainOf(entry.url).replace(/\./g, " ") + " " + domainOf(entry.url)),
-    tags: normalize(entry.tags.join(" ")),
-    place: normalize(`${city.en} ${city.ur} ${category.label.en} ${category.label.ur}`),
-    description: normalize(`${entry.description.en} ${entry.description.ur}`),
-  };
-});
+function buildIndex(sites: Site[], categories: Category[]): Indexed[] {
+  const byId = new Map(categories.map((c) => [c.id, c]));
+  return sites.map((entry) => {
+    const category = byId.get(entry.category);
+    const host = hostOf(entry.url);
+    return {
+      entry,
+      title: normalize(`${entry.title.en} ${entry.title.ur}`),
+      domain: normalize(host.replace(/\./g, " ") + " " + host),
+      tags: normalize(entry.tags.join(" ")),
+      place: normalize(
+        `${entry.city.en} ${entry.city.ur} ${category?.label.en ?? ""} ${category?.label.ur ?? ""}`,
+      ),
+      description: normalize(`${entry.description.en} ${entry.description.ur}`),
+    };
+  });
+}
 
-export type SearchResult = { entry: Entry; score: number };
+const indexCache = new WeakMap<Site[], Indexed[]>();
+function indexFor(sites: Site[], categories: Category[]): Indexed[] {
+  let idx = indexCache.get(sites);
+  if (!idx) {
+    idx = buildIndex(sites, categories);
+    indexCache.set(sites, idx);
+  }
+  return idx;
+}
 
-export function search(query: string, category?: CategoryId): SearchResult[] {
-  const pool = category ? INDEX.filter((i) => i.entry.category === category) : INDEX;
+export type SearchResult = { entry: Site; score: number };
+
+export function search(
+  query: string,
+  category?: string,
+  sites: Site[] = STATIC_SITES,
+  categories: Category[] = STATIC_CATEGORIES,
+): SearchResult[] {
+  const all = indexFor(sites, categories);
+  const pool = category ? all.filter((i) => i.entry.category === category) : all;
   const tokens = tokenize(query);
 
   if (tokens.length === 0) {
@@ -79,6 +96,8 @@ export function search(query: string, category?: CategoryId): SearchResult[] {
     }
     // Exact phrase in the title outranks scattered word matches.
     if (phrase.length > 2 && item.title.includes(phrase)) score += 10;
+    // Hand-picked entries edge out automatically found ones on ties.
+    if (!item.entry.discovered) score += 0.5;
     if (matched > 0) results.push({ entry: item.entry, score, matched });
   }
 
@@ -88,9 +107,10 @@ export function search(query: string, category?: CategoryId): SearchResult[] {
 }
 
 export function displayDomain(url: string): string {
-  return domainOf(url);
+  return hostOf(url);
 }
 
-export function isCategoryId(value: unknown): value is CategoryId {
-  return typeof value === "string" && CATEGORIES.some((c) => c.id === value);
+/** Category ids are short lowercase slugs (built-in or created by discovery). */
+export function isCategorySlug(value: unknown): value is string {
+  return typeof value === "string" && /^[a-z0-9-]{2,40}$/.test(value);
 }
