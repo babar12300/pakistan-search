@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ApiPublicJobsDiscoverSitesRouteImport } from './routes/api/public/jobs/discover-sites'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,41 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsDiscoverSitesRoute =
+  ApiPublicJobsDiscoverSitesRouteImport.update({
+    id: '/api/public/jobs/discover-sites',
+    path: '/api/public/jobs/discover-sites',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/api/public/jobs/discover-sites': typeof ApiPublicJobsDiscoverSitesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/api/public/jobs/discover-sites': typeof ApiPublicJobsDiscoverSitesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/api/public/jobs/discover-sites': typeof ApiPublicJobsDiscoverSitesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/search'
+  fullPaths: '/' | '/search' | '/api/public/jobs/discover-sites'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/search'
-  id: '__root__' | '/' | '/search'
+  to: '/' | '/search' | '/api/public/jobs/discover-sites'
+  id: '__root__' | '/' | '/search' | '/api/public/jobs/discover-sites'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SearchRoute: typeof SearchRoute
+  ApiPublicJobsDiscoverSitesRoute: typeof ApiPublicJobsDiscoverSitesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +76,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/discover-sites': {
+      id: '/api/public/jobs/discover-sites'
+      path: '/api/public/jobs/discover-sites'
+      fullPath: '/api/public/jobs/discover-sites'
+      preLoaderRoute: typeof ApiPublicJobsDiscoverSitesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SearchRoute: SearchRoute,
+  ApiPublicJobsDiscoverSitesRoute: ApiPublicJobsDiscoverSitesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
