@@ -1,13 +1,12 @@
-import { ArrowUpRight, MapPin } from "lucide-react";
-import { CATEGORIES, CITIES, type Entry } from "@/data/directory";
+import { ArrowUpRight, MapPin, Sparkles } from "lucide-react";
+import type { Category, Site } from "@/lib/catalog";
 import { displayDomain } from "@/lib/search";
 import { useLang } from "@/lib/i18n";
 import { CategoryIcon } from "./CategoryIcon";
 
-export function ResultCard({ entry }: { entry: Entry }) {
+export function ResultCard({ entry, category }: { entry: Site; category?: Category | undefined }) {
   const { lang } = useLang();
   const domain = displayDomain(entry.url);
-  const category = CATEGORIES.find((c) => c.id === entry.category)!;
 
   return (
     <article className="group rounded-2xl border border-transparent p-4 transition-colors hover:border-border hover:bg-card sm:p-5">
@@ -34,14 +33,22 @@ export function ResultCard({ entry }: { entry: Entry }) {
         {entry.description[lang]}
       </p>
       <div className="mt-3 flex flex-wrap gap-2 text-xs">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 font-medium text-secondary-foreground">
-          <CategoryIcon id={entry.category} className="h-3.5 w-3.5" />
-          {category.label[lang]}
-        </span>
+        {category && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 font-medium text-secondary-foreground">
+            <CategoryIcon icon={category.icon} className="h-3.5 w-3.5" />
+            {category.label[lang]}
+          </span>
+        )}
         <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 font-medium text-muted-foreground">
           <MapPin className="h-3.5 w-3.5" />
-          {CITIES[entry.city][lang]}
+          {entry.city[lang]}
         </span>
+        {entry.discovered && (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 font-medium text-muted-foreground">
+            <Sparkles className="h-3.5 w-3.5" />
+            {lang === "ur" ? "خودکار طور پر ملی" : "Found automatically"}
+          </span>
+        )}
       </div>
     </article>
   );

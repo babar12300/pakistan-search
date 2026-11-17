@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CATEGORIES, DIRECTORY } from "@/data/directory";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { catalogQuery } from "@/lib/catalog.queries";
 import { POPULAR, useLang } from "@/lib/i18n";
 import { Logo } from "@/components/search/Logo";
 import { LangToggle } from "@/components/search/LangToggle";
@@ -24,11 +25,13 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(catalogQuery),
   component: Home,
 });
 
 function Home() {
   const { lang, t } = useLang();
+  const { sites, categories } = useSuspenseQuery(catalogQuery).data;
 
   return (
     <div className="flex min-h-screen flex-col bg-hero">
@@ -70,8 +73,9 @@ function Home() {
             {t("browse")}
           </h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-            {CATEGORIES.map((c) => {
-              const count = DIRECTORY.filter((e) => e.category === c.id).length;
+            {categories.map((c) => {
+              const count = sites.filter((e) => e.category === c.id).length;
+              if (count === 0) return null;
               return (
                 <Link
                   key={c.id}
@@ -80,7 +84,7 @@ function Home() {
                   className="group flex flex-col items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary"
                 >
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                    <CategoryIcon id={c.id} className="h-5 w-5" />
+                    <CategoryIcon icon={c.icon} className="h-5 w-5" />
                   </span>
                   <span>
                     <span className="block text-sm font-semibold leading-tight text-foreground">
