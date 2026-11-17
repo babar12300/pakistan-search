@@ -9,11 +9,31 @@ import {
   Trophy,
   HeartPulse,
   Music,
+  Globe,
+  Briefcase,
+  UtensilsCrossed,
+  Car,
+  House,
+  Cpu,
+  Shirt,
+  Plane,
+  BookOpen,
+  Building2,
+  Factory,
+  Leaf,
+  Clapperboard,
+  HeartHandshake,
+  Scale,
+  Hammer,
+  Baby,
+  PawPrint,
+  Wheat,
+  Palette,
   type LucideIcon,
 } from "lucide-react";
-import type { CategoryId } from "@/data/directory";
 
-const ICONS: Record<CategoryId, LucideIcon> = {
+/** Icon names a category can use. Built-in categories use their own id as the icon name. */
+export const CATEGORY_ICONS: Record<string, LucideIcon> = {
   news: Newspaper,
   government: Landmark,
   education: GraduationCap,
@@ -24,9 +44,29 @@ const ICONS: Record<CategoryId, LucideIcon> = {
   sports: Trophy,
   health: HeartPulse,
   culture: Music,
+  globe: Globe,
+  business: Briefcase,
+  food: UtensilsCrossed,
+  automotive: Car,
+  "real-estate": House,
+  technology: Cpu,
+  fashion: Shirt,
+  airline: Plane,
+  books: BookOpen,
+  company: Building2,
+  industry: Factory,
+  environment: Leaf,
+  entertainment: Clapperboard,
+  charity: HeartHandshake,
+  law: Scale,
+  construction: Hammer,
+  kids: Baby,
+  pets: PawPrint,
+  agriculture: Wheat,
+  arts: Palette,
 };
 
-export function CategoryIcon({ id, className }: { id: CategoryId; className?: string }) {
-  const Icon = ICONS[id];
+export function CategoryIcon({ icon, className }: { icon: string; className?: string }) {
+  const Icon = CATEGORY_ICONS[icon] ?? Globe;
   return <Icon className={className} aria-hidden="true" />;
 }
