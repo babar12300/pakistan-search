@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { catalogQuery } from "@/lib/catalog.queries";
 import { SearchX } from "lucide-react";
-import { CATEGORIES, type CategoryId } from "@/data/directory";
-import { isCategoryId, search } from "@/lib/search";
+import { isCategorySlug, search } from "@/lib/search";
 import { useLang } from "@/lib/i18n";
 import { Logo } from "@/components/search/Logo";
 import { LangToggle } from "@/components/search/LangToggle";
@@ -9,12 +10,12 @@ import { SearchBox } from "@/components/search/SearchBox";
 import { ResultCard } from "@/components/search/ResultCard";
 import { cn } from "@/lib/utils";
 
-type SearchParams = { q?: string | undefined; cat?: CategoryId | undefined };
+type SearchParams = { q?: string | undefined; cat?: string | undefined };
 
 export const Route = createFileRoute("/search")({
   validateSearch: (s: Record<string, unknown>): SearchParams => ({
     q: typeof s["q"] === "string" && s["q"].trim() ? s["q"] : undefined,
-    cat: isCategoryId(s["cat"]) ? s["cat"] : undefined,
+    cat: isCategorySlug(s["cat"]) ? s["cat"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -32,13 +33,17 @@ export const Route = createFileRoute("/search")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(catalogQuery),
   component: SearchPage,
 });
 
 function SearchPage() {
   const { q = "", cat } = Route.useSearch();
   const { lang, t } = useLang();
-  const results = search(q, cat);
+  const { sites, categories } = useSuspenseQuery(catalogQuery).data;
+  const results = search(q, cat, sites, categories);
+  const byId = new Map(categories.map((c) => [c.id, c]));
+  const usedIds = new Set(sites.map((s) => s.category));
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -58,7 +63,7 @@ function SearchPage() {
         <nav className="mx-auto max-w-5xl overflow-x-auto px-4 sm:px-6">
           <div className="flex gap-1 pb-2">
             <CategoryTab q={q} active={!cat} label={t("all")} />
-            {CATEGORIES.map((c) => (
+            {categories.filter((c) => usedIds.has(c.id)).map((c) => (
               <CategoryTab key={c.id} q={q} cat={c.id} active={cat === c.id} label={c.label[lang]} />
             ))}
           </div>
@@ -83,7 +88,7 @@ function SearchPage() {
         ) : (
           <div className="max-w-3xl space-y-1">
             {results.map(({ entry }) => (
-              <ResultCard key={entry.id} entry={entry} />
+              <ResultCard key={entry.id} entry={entry} category={byId.get(entry.category)} />
             ))}
           </div>
         )}
@@ -103,7 +108,7 @@ function CategoryTab({
   label,
 }: {
   q: string;
-  cat?: CategoryId | undefined;
+  cat?: string | undefined;
   active: boolean;
   label: string;
 }) {

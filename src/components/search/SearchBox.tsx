@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
 import { useLang } from "@/lib/i18n";
-import type { CategoryId } from "@/data/directory";
 import { cn } from "@/lib/utils";
 
 export function SearchBox({
@@ -12,7 +11,7 @@ export function SearchBox({
   autoFocus,
 }: {
   defaultValue?: string;
-  category?: CategoryId | undefined;
+  category?: string | undefined;
   size?: "lg" | "sm";
   autoFocus?: boolean;
 }) {
